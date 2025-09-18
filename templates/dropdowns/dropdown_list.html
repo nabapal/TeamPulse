@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Dropdown Management</h2>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h3>Node Names</h3>
+      <a href="{% url 'dropdowns:nodename_add' %}" class="btn btn-primary btn-sm mb-2">Add Node Name</a>
+      <table class="table table-bordered">
+        <tbody>
+          {% for nodename in node_names %}
+            <tr>
+              <td>{{ nodename.name }}</td>
+              <td>
+                <a href="{% url 'dropdowns:nodename_edit' nodename.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                <a href="{% url 'dropdowns:nodename_delete' nodename.pk %}" class="btn btn-danger btn-sm">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-4">
+      <h3>Activity Types</h3>
+      <a href="{% url 'dropdowns:activitytype_add' %}" class="btn btn-primary btn-sm mb-2">Add Activity Type</a>
+      <table class="table table-bordered">
+        <tbody>
+          {% for activitytype in activity_types %}
+            <tr>
+              <td>{{ activitytype.name }}</td>
+              <td>
+                <a href="{% url 'dropdowns:activitytype_edit' activitytype.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                <a href="{% url 'dropdowns:activitytype_delete' activitytype.pk %}" class="btn btn-danger btn-sm">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-4">
+      <h3>Statuses</h3>
+      <a href="{% url 'dropdowns:status_add' %}" class="btn btn-primary btn-sm mb-2">Add Status</a>
+      <table class="table table-bordered">
+        <tbody>
+          {% for status in statuses %}
+            <tr>
+              <td>{{ status.name }}</td>
+              <td>
+                <a href="{% url 'dropdowns:status_edit' status.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                <a href="{% url 'dropdowns:status_delete' status.pk %}" class="btn btn-danger btn-sm">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Dashboard</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">Filters</div>
+    <div class="card-body">
+      <form method="get" action="{% url 'dashboard:dashboard' %}" class="row g-3">
+        <div class="col-md-6">
+          <input type="text" name="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
+        </div>
+        <div class="col-md-3">
+          <select name="status" class="form-select">
+            <option value="">-- Status --</option>
+            {% for status in statuses %}
+              <option value="{{ status.pk }}" {% if request.GET.status == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="activity_type" class="form-select">
+            <option value="">-- Activity Type --</option>
+            {% for at in activity_types %}
+              <option value="{{ at.pk }}" {% if request.GET.activity_type == at.pk|stringformat:"s" %}selected{% endif %}>{{ at.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="node_name" class="form-select">
+            <option value="">-- Node Name --</option>
+            {% for nn in node_names %}
+              <option value="{{ nn.pk }}" {% if request.GET.node_name == nn.pk|stringformat:"s" %}selected{% endif %}>{{ nn.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="assignee" class="form-select">
+            <option value="">-- Assignee --</option>
+            {% for assignee in assignees %}
+              <option value="{{ assignee.pk }}" {% if request.GET.assignee == assignee.pk|stringformat:"s" %}selected{% endif %}>{{ assignee.username }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      {% block dashboard_content %}{% endblock %}
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">Activity Status</div>
+        <div class="card-body">
+          <canvas id="statusPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('statusPieChart');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: {{ pie_chart_labels|safe }},
+        datasets: [{
+          label: '# of Activities',
+          data: {{ pie_chart_data|safe }},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+      }
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'dashboard/_dashboard_base.html' %}
+
+{% block dashboard_content %}
+  <div class="card">
+    <div class="card-header">All Activities</div>
+    <div class="list-group list-group-flush">
+      {% for activity in activities %}
+        <a href="{% url 'activities:activity_detail' activity.pk %}" class="list-group-item list-group-item-action">
+          {{ activity.description }}
+          <span class="badge bg-secondary float-end">{{ activity.status.name }}</span>
+          <br>
+          <small class="text-muted">
+            Assigned to:
+            {% for user in activity.assigned_users.all %}
+              {{ user.username }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </small>
+        </a>
+      {% empty %}
+        <div class="list-group-item">No activities in the system.</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

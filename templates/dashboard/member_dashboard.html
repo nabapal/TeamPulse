@@ -1,0 +1,17 @@
+{% extends 'dashboard/_dashboard_base.html' %}
+
+{% block dashboard_content %}
+  <div class="card">
+    <div class="card-header">Your Activities</div>
+    <div class="list-group list-group-flush">
+      {% for activity in activities %}
+        <a href="{% url 'activities:activity_detail' activity.pk %}" class="list-group-item list-group-item-action">
+          {{ activity.description }}
+          <span class="badge bg-secondary float-end">{{ activity.status.name }}</span>
+        </a>
+      {% empty %}
+        <div class="list-group-item">You have no activities assigned.</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
