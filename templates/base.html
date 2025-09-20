@@ -1,55 +1,72 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Daily Activity Portal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Daily Activity Portal</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/coreui.min.css' %}" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">Daily Activity Portal</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
-            </li>
-            {% if user.role == 'super_admin' or user.role == 'manager' %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'reports:report' %}">Reports</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'dropdowns:dropdown_list' %}">Dropdowns</a>
-              </li>
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+        <div class="sidebar-brand d-none d-md-flex">
+            <a class="sidebar-brand-full" href="{% url 'dashboard:dashboard' %}">Daily Activity Portal</a>
+        </div>
+        <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+                </li>
+                {% if user.role == 'super_admin' or user.role == 'manager' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reports:report' %}">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dropdowns:dropdown_list' %}">Dropdowns</a>
+                    </li>
+                {% endif %}
             {% endif %}
-          {% endif %}
         </ul>
-        <ul class="navbar-nav">
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <span class="navbar-text">Welcome, {{ user.username }}!</span>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
     </div>
-  </nav>
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
+        <header class="header header-sticky mb-4">
+            <div class="container-fluid">
+                <button class="header-toggler px-md-0 me-md-3" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
+                    <svg class="icon icon-lg">
+                        <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg' %}#cil-menu"></use>
+                    </svg>
+                </button>
+                <ul class="header-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="nav-link">Welcome, {{ user.username }}!</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </header>
+        <div class="body flex-grow-1 px-3">
+            <div class="container-lg">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <footer class="footer">
+            <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io/product/free-bootstrap-admin-template/">Bootstrap Admin Template</a> © 2023 creativeLabs.</div>
+            <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div>
+        </footer>
+    </div>
 
-  <main class="container mt-4">
-    {% block content %}
-    {% endblock %}
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/coreui.bundle.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
