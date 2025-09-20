@@ -16,9 +16,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
                 </li>
-                {% if user.role == 'super_admin' or user.role == 'manager' %}
+          {% if user.role == 'lead' or user.role == 'manager' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'reports:report' %}">Reports</a>
+              <a class="nav-link" href="{% url 'reports:daily_report' %}">Reports</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dropdowns:dropdown_list' %}">Dropdowns</a>
