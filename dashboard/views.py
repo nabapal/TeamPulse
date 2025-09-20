@@ -68,4 +68,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['pie_chart_labels'] = list(status_counts.keys())
         context['pie_chart_data'] = list(status_counts.values())
 
+        # Add context for report tabs
+        context['report_type'] = 'dashboard'
+
         return context

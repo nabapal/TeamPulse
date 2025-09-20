@@ -3,6 +3,7 @@ from django.db import models
 from dropdowns.models import NodeName, ActivityType, Status
 
 class Activity(models.Model):
+    activity_id = models.AutoField(primary_key=True)
     description = models.TextField()
     node_name = models.ForeignKey(NodeName, on_delete=models.PROTECT)
     activity_type = models.ForeignKey(ActivityType, on_delete=models.PROTECT)
@@ -26,4 +27,4 @@ class Activity(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.pk}: {self.description}"
+        return f"{self.activity_id}: {self.description}"

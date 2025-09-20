@@ -51,6 +51,10 @@ class ReportView(LoginRequiredMixin, View):
         context = {
             'activities': activities,
             'report_type': self.report_type,
+            'statuses': Status.objects.all(),
+            'activity_types': ActivityType.objects.all(),
+            'node_names': NodeName.objects.all(),
+            'assignees': CustomUser.objects.all(),
         }
         return context
 
@@ -98,7 +102,7 @@ def export_activities_excel(request, report_type):
     for activity in activities:
         assigned_users = ", ".join([user.username for user in activity.assigned_users.all()])
         row = [
-            activity.pk,
+            activity.activity_id,
             activity.description,
             activity.node_name.name,
             activity.activity_type.name,
@@ -127,7 +131,7 @@ def export_activities_csv(request, report_type):
     for activity in activities:
         assigned_users = ", ".join([user.username for user in activity.assigned_users.all()])
         writer.writerow([
-            activity.pk,
+            activity.activity_id,
             activity.description,
             activity.node_name.name,
             activity.activity_type.name,
@@ -147,7 +151,7 @@ def export_activities_json(request, report_type):
     for activity in activities:
         assigned_users = [user.username for user in activity.assigned_users.all()]
         data.append({
-            'activity_id': activity.pk,
+            'activity_id': activity.activity_id,
             'description': activity.description,
             'node_name': activity.node_name.name,
             'activity_type': activity.activity_type.name,
@@ -175,7 +179,7 @@ def export_activities_pdf(request, report_type):
     for activity in activities:
         assigned_users = ", ".join([user.username for user in activity.assigned_users.all()])
         data.append([
-            activity.pk,
+            activity.activity_id,
             activity.description,
             activity.status.name,
             assigned_users,
