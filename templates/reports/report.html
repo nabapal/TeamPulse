@@ -5,10 +5,10 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <h2>{% if report_type == 'daily' %}Daily{% elif report_type == 'weekly' %}Weekly{% elif report_type == 'monthly' %}Monthly{% endif %} Report</h2>
     <div class="btn-group">
-      <a href="{% url 'reports:export_excel' %}" class="btn btn-success">Excel</a>
-      <a href="{% url 'reports:export_csv' %}" class="btn btn-primary">CSV</a>
-      <a href="{% url 'reports:export_json' %}" class="btn btn-info">JSON</a>
-      <a href="{% url 'reports:export_pdf' %}" class="btn btn-danger">PDF</a>
+      <a href="{% url 'reports:export_excel' report_type %}" class="btn btn-success">Excel</a>
+      <a href="{% url 'reports:export_csv' report_type %}" class="btn btn-primary">CSV</a>
+      <a href="{% url 'reports:export_json' report_type %}" class="btn btn-info">JSON</a>
+      <a href="{% url 'reports:export_pdf' report_type %}" class="btn btn-danger">PDF</a>
     </div>
   </div>
   <div class="card-body">

@@ -8,14 +8,13 @@ from django.utils import timezone
 from django.db.models import Count, Q
 from openpyxl import Workbook
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required, user_passes_test
-
-class ManagerOrLeadRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.role in ['manager', 'lead']
-
-def is_manager_or_lead(user):
-    return user.is_authenticated and user.role in ['manager', 'lead']
+from django.contrib.auth.decorators import login_required
+import csv
+import json
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 class ReportView(LoginRequiredMixin, View):
     template_name = 'reports/report.html'
@@ -68,30 +67,29 @@ class WeeklyReportView(ReportView):
 class MonthlyReportView(ReportView):
     report_type = 'monthly'
 
-import csv
-import json
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+def get_report_queryset(request, report_type):
+    view_map = {
+        'daily': DailyReportView,
+        'weekly': WeeklyReportView,
+        'monthly': MonthlyReportView,
+    }
+    view_class = view_map.get(report_type)
+    if view_class:
+        view = view_class()
+        view.request = request
+        return view.get_queryset()
+    return Activity.objects.none()
 
 @login_required
-@user_passes_test(is_manager_or_lead)
-def export_activities_excel(request):
+def export_activities_excel(request, report_type):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="activities_report.xlsx"'
+    response['Content-Disposition'] = f'attachment; filename="{report_type}_activities_report.xlsx"'
 
     wb = Workbook()
     ws = wb.active
-    ws.title = "Activities Report"
+    ws.title = f"{report_type.capitalize()} Activities Report"
 
-    activities = Activity.objects.all()
-    if request.user.role == 'manager':
-        if request.user.managed_teams.exists():
-            team_members = request.user.managed_teams.first().members.all()
-            activities = activities.filter(assigned_users__in=team_members)
-        else:
-            activities = Activity.objects.none()
+    activities = get_report_queryset(request, report_type)
 
     # Headers
     headers = ["Activity ID", "Description", "Node Name", "Activity Type", "Status", "Start Date", "End Date", "Assigned Users"]
@@ -115,20 +113,13 @@ def export_activities_excel(request):
     return response
 
 @login_required
-@user_passes_test(is_manager_or_lead)
-def export_activities_csv(request):
+def export_activities_csv(request, report_type):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="activities_report.csv"'
+    response['Content-Disposition'] = f'attachment; filename="{report_type}_activities_report.csv"'
 
     writer = csv.writer(response)
 
-    activities = Activity.objects.all()
-    if request.user.role == 'manager':
-        if request.user.managed_teams.exists():
-            team_members = request.user.managed_teams.first().members.all()
-            activities = activities.filter(assigned_users__in=team_members)
-        else:
-            activities = Activity.objects.none()
+    activities = get_report_queryset(request, report_type)
 
     # Headers
     writer.writerow(["Activity ID", "Description", "Node Name", "Activity Type", "Status", "Start Date", "End Date", "Assigned Users"])
@@ -149,15 +140,8 @@ def export_activities_csv(request):
     return response
 
 @login_required
-@user_passes_test(is_manager_or_lead)
-def export_activities_json(request):
-    activities = Activity.objects.all()
-    if request.user.role == 'manager':
-        if request.user.managed_teams.exists():
-            team_members = request.user.managed_teams.first().members.all()
-            activities = activities.filter(assigned_users__in=team_members)
-        else:
-            activities = Activity.objects.none()
+def export_activities_json(request, report_type):
+    activities = get_report_queryset(request, report_type)
 
     data = []
     for activity in activities:
@@ -174,22 +158,15 @@ def export_activities_json(request):
         })
 
     response = HttpResponse(json.dumps(data, indent=4), content_type='application/json')
-    response['Content-Disposition'] = 'attachment; filename="activities_report.json"'
+    response['Content-Disposition'] = f'attachment; filename="{report_type}_activities_report.json"'
     return response
 
 @login_required
-@user_passes_test(is_manager_or_lead)
-def export_activities_pdf(request):
+def export_activities_pdf(request, report_type):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="activities_report.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="{report_type}_activities_report.pdf"'
 
-    activities = Activity.objects.all()
-    if request.user.role == 'manager':
-        if request.user.managed_teams.exists():
-            team_members = request.user.managed_teams.first().members.all()
-            activities = activities.filter(assigned_users__in=team_members)
-        else:
-            activities = Activity.objects.none()
+    activities = get_report_queryset(request, report_type)
 
     doc = SimpleDocTemplate(response, pagesize=letter)
     elements = []
