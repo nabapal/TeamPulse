@@ -5,10 +5,13 @@
 
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active" aria-current="page" href="#">Active</a>
+      <a class="nav-link {% if request.path == '/reports/daily/' %}active{% endif %}" href="{% url 'reports:daily_report' %}">Daily</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link disabled" href="#">History</a>
+      <a class="nav-link {% if request.path == '/reports/weekly/' %}active{% endif %}" href="{% url 'reports:weekly_report' %}">Weekly</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.path == '/reports/monthly/' %}active{% endif %}" href="{% url 'reports:monthly_report' %}">Monthly</a>
     </li>
   </ul>
   <div class="mt-3">
@@ -16,7 +19,7 @@
   <div class="card mb-4">
     <div class="card-header">Filters</div>
     <div class="card-body">
-      <form method="get" action="{% url 'dashboard:dashboard' %}" class="row g-3">
+      <form method="get" action="" class="row g-3">
         <div class="col-md-6">
           <input type="text" name="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
         </div>

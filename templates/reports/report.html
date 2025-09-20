@@ -1,111 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Reports</h2>
-    <div>
-      <a href="{% url 'reports:export_excel' %}" class="btn btn-success">Export to Excel</a>
-      <button onclick="window.print()" class="btn btn-secondary">Print Report</button>
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h2>{% if report_type == 'daily' %}Daily{% elif report_type == 'weekly' %}Weekly{% elif report_type == 'monthly' %}Monthly{% endif %} Report</h2>
+    <div class="btn-group">
+      <a href="{% url 'reports:export_excel' %}" class="btn btn-success">Excel</a>
+      <a href="{% url 'reports:export_csv' %}" class="btn btn-primary">CSV</a>
+      <a href="{% url 'reports:export_json' %}" class="btn btn-info">JSON</a>
+      <a href="{% url 'reports:export_pdf' %}" class="btn btn-danger">PDF</a>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">Activities by Node Name & Type</div>
-        <div class="card-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Node Name</th>
-                <th>Activity Type</th>
-                <th>Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in grouped_activities %}
-                <tr>
-                  <td>{{ item.node_name__name }}</td>
-                  <td>{{ item.activity_type__name }}</td>
-                  <td>{{ item.count }}</td>
-                </tr>
+  <div class="card-body">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity in activities %}
+          <tr>
+            <td>{{ activity.description|truncatewords:20 }}</td>
+            <td><span class="badge bg-{{ activity.status.name|status_color }}">{{ activity.status.name }}</span></td>
+            <td>
+              {% for user in activity.assigned_users.all %}
+                {{ user.username }}{% if not forloop.last %}, {% endif %}
               {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">Activity Distribution by Status</div>
-        <div class="card-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in status_distribution %}
-                <tr>
-                  <td>{{ item.status__name }}</td>
-                  <td>{{ item.count }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            </td>
+            <td>{{ activity.start_date }}</td>
+            <td>{{ activity.end_date }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">No activities found for this period.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">Activity Counts by Team Member</div>
-        <div class="card-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Team Member</th>
-                <th>Total Activities</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in activity_counts %}
-                <tr>
-                  <td>{{ item.username }}</td>
-                  <td>{{ item.total_activities }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">In-Progress Activities by Team Member</div>
-        <div class="card-body">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Team Member</th>
-                <th>In-Progress Activities</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in inprogress_counts %}
-                <tr>
-                  <td>{{ item.username }}</td>
-                  <td>{{ item.inprogress_activities }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 {% endblock %}

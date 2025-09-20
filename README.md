@@ -4,7 +4,7 @@ This project is a web-based portal for tracking the daily activities of team mem
 
 ## Features
 
-- **Role-Based Access Control**: Different views and permissions for Super Admins, Team Managers, and Team Members.
+- **Role-Based Access Control**: Different views and permissions for Leads, Team Managers, and Team Members.
 - **Activity Management**: Create, update, and assign activities.
 - **Daily Updates**: Log daily progress on activities.
 - **Dashboards**: At-a-glance overview of activities, with search and filtering.
@@ -63,7 +63,7 @@ This project is fully containerized using Docker. To run the application, you wi
 -   **User Roles**:
     -   **Team Member**: Can log and update their own activities. Can assign activities to other members.
     -   **Team Manager**: Can manage a single team, assign activities, manage dropdown values, and generate team-level reports.
-    -   **Super Admin**: Has full control over the system, can manage multiple teams, and generate system-wide reports.
+    -   **Lead**: Has full control over the system, can manage multiple teams, and generate system-wide reports.
 
 ## Running the Application
 
@@ -82,11 +82,10 @@ sudo docker compose logs -f
 ```
 
 ## Seeding Initial Data
-The SRS specifies that there should be a seed script or fixtures for default dropdown values, sample users, and test activities. This has not been implemented yet.
-To manually seed the data, you can use the Django admin panel to create:
-1.  **Dropdown values**: Go to the `Dropdowns` section and add some `Node Names`, `Activity Types`, and `Statuses`. For example, for Status, you could add "To Do", "In Progress", and "Completed".
-2.  **Users**: Create some users with different roles.
-3.  **Teams**: Create a team and assign a manager and members.
-4.  **Activities**: Create some activities and assign them to users.
+To populate the database with initial data, you can run the seed script. This will create a lead, managers, teams, members, dropdown values, and activities.
 
-This will populate the application with some initial data to work with.
+```bash
+sudo docker compose exec web python manage.py seed_data
+```
+
+This command will wipe all existing data and create a fresh set of sample data as specified in the SRS.
