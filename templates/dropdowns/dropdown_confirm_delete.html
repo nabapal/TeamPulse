@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Delete Dropdown Item</h2>
-  <p>Are you sure you want to delete "{{ object }}"?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Confirm</button>
-    <a href="{% url 'dropdowns:dropdown_list' %}" class="btn btn-secondary">Cancel</a>
-  </form>
+<div class="card">
+    <div class="card-header">
+        <h2>Delete Dropdown Item</h2>
+    </div>
+    <div class="card-body">
+        <p>Are you sure you want to delete "{{ object }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirm</button>
+            <a href="{% url 'dropdowns:dropdown_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
 {% endblock %}
