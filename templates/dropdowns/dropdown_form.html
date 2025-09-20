@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>{% if object %}Edit{% else %}Add{% endif %} Dropdown Item</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save</button>
-  </form>
+<div class="card">
+    <div class="card-header">
+        <h2>{% if object %}Edit{% else %}Add{% endif %} Dropdown Item</h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

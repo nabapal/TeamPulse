@@ -1,4 +1,5 @@
 {% extends 'dashboard/_dashboard_base.html' %}
+{% load activity_tags %}
 
 {% block dashboard_content %}
   <div class="card">
@@ -7,7 +8,7 @@
       {% for activity in activities %}
         <a href="{% url 'activities:activity_detail' activity.pk %}" class="list-group-item list-group-item-action">
           {{ activity.description }}
-          <span class="badge bg-secondary float-end">{{ activity.status.name }}</span>
+          <span class="badge bg-{{ activity.status.name|status_color }} float-end">{{ activity.status.name }}</span>
           <br>
           <small class="text-muted">
             Assigned to:
