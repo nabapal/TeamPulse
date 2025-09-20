@@ -10,7 +10,7 @@ class ActivityListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'super_admin':
+        if user.role == 'lead':
             return Activity.objects.all()
         elif user.role == 'manager':
             return Activity.objects.filter(assigned_users__in=user.managed_teams.first().members.all())
@@ -40,11 +40,9 @@ class ActivityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         user = self.request.user
         activity = self.get_object()
-        if user.role in ['super_admin', 'manager']:
+        if user.role in ['lead', 'manager']:
             return True
-        elif user.role == 'member' and activity.status.name == 'Completed':
-            return True
-        return False
+        return activity.assigned_users.filter(pk=user.pk).exists()
 
 class ActivityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Activity
@@ -53,4 +51,4 @@ class ActivityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         user = self.request.user
-        return user.role in ['super_admin', 'manager']
+        return user.role in ['lead', 'manager']

@@ -7,8 +7,8 @@ from users.models import CustomUser
 class DashboardView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         user = self.request.user
-        if user.role == 'super_admin':
-            return 'dashboard/super_admin_dashboard.html'
+        if user.role == 'lead':
+            return 'dashboard/lead_dashboard.html'
         elif user.role == 'manager':
             return 'dashboard/manager_dashboard.html'
         else:
@@ -27,7 +27,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 activities = Activity.objects.none()
         elif user.role == 'member':
             activities = Activity.objects.filter(assigned_users=user)
-        else: # super_admin
+        else: # lead
             activities = Activity.objects.all()
 
         # Handle search and filtering
