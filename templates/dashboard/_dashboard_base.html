@@ -1,103 +1,110 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Dashboard</h2>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{% block page_header %}Dashboard{% endblock %}</h1>
+</div>
 
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link {% if request.path == '/reports/daily/' %}active{% endif %}" href="{% url 'reports:daily_report' %}">Daily</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link {% if request.path == '/reports/weekly/' %}active{% endif %}" href="{% url 'reports:weekly_report' %}">Weekly</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link {% if request.path == '/reports/monthly/' %}active{% endif %}" href="{% url 'reports:monthly_report' %}">Monthly</a>
-    </li>
-  </ul>
-  <div class="mt-3">
-
-  <div class="card mb-4">
-    <div class="card-header">Filters</div>
-    <div class="card-body">
-      <form method="get" action="" class="row g-3">
-        <div class="col-md-6">
-          <input type="text" name="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
-        </div>
-        <div class="col-md-3">
-          <select name="status" class="form-select">
-            <option value="">-- Status --</option>
-            {% for status in statuses %}
-              <option value="{{ status.pk }}" {% if request.GET.status == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-3">
-          <select name="activity_type" class="form-select">
-            <option value="">-- Activity Type --</option>
-            {% for at in activity_types %}
-              <option value="{{ at.pk }}" {% if request.GET.activity_type == at.pk|stringformat:"s" %}selected{% endif %}>{{ at.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-3">
-          <select name="node_name" class="form-select">
-            <option value="">-- Node Name --</option>
-            {% for nn in node_names %}
-              <option value="{{ nn.pk }}" {% if request.GET.node_name == nn.pk|stringformat:"s" %}selected{% endif %}>{{ nn.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-3">
-          <select name="assignee" class="form-select">
-            <option value="">-- Assignee --</option>
-            {% for assignee in assignees %}
-              <option value="{{ assignee.pk }}" {% if request.GET.assignee == assignee.pk|stringformat:"s" %}selected{% endif %}>{{ assignee.username }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-3">
-            <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
-        </div>
-        <div class="col-md-3">
-            <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
-        </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary">Filter</button>
-        </div>
-      </form>
+<div class="card mb-4">
+    <div class="card-header">
+        Filters
     </div>
-  </div>
+    <div class="card-body">
+        <form method="get" action="" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <label for="q" class="visually-hidden">Search</label>
+                <input type="text" name="q" id="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
+            </div>
+            <div class="col-md-2">
+                <label for="status" class="visually-hidden">Status</label>
+                <select name="status" id="status" class="form-select">
+                    <option value="">-- Status --</option>
+                    {% for status in statuses %}
+                        <option value="{{ status.pk }}" {% if request.GET.status == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="activity_type" class="visually-hidden">Activity Type</label>
+                <select name="activity_type" id="activity_type" class="form-select">
+                    <option value="">-- Activity Type --</option>
+                    {% for at in activity_types %}
+                        <option value="{{ at.pk }}" {% if request.GET.activity_type == at.pk|stringformat:"s" %}selected{% endif %}>{{ at.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="assignee" class="visually-hidden">Assignee</label>
+                <select name="assignee" id="assignee" class="form-select">
+                    <option value="">-- Assignee --</option>
+                    {% for assignee in assignees %}
+                        <option value="{{ assignee.pk }}" {% if request.GET.assignee == assignee.pk|stringformat:"s" %}selected{% endif %}>{{ assignee.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-  <div class="row">
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if report_type == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if report_type == 'daily' %}active{% endif %}" href="{% url 'reports:daily_report' %}">Daily Report</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if report_type == 'weekly' %}active{% endif %}" href="{% url 'reports:weekly_report' %}">Weekly Report</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if report_type == 'monthly' %}active{% endif %}" href="{% url 'reports:monthly_report' %}">Monthly Report</a>
+    </li>
+</ul>
+
+<div class="row">
     <div class="col-md-8">
-      {% block dashboard_content %}{% endblock %}
+        {% block dashboard_content %}{% endblock %}
     </div>
     <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">Activity Status</div>
-        <div class="card-body">
-          <canvas id="statusPieChart"></canvas>
+        <div class="card">
+            <div class="card-header">Activity Status</div>
+            <div class="card-body">
+                <canvas id="statusPieChart"></canvas>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
     const ctx = document.getElementById('statusPieChart');
-    new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: {{ pie_chart_labels|safe }},
-        datasets: [{
-          label: '# of Activities',
-          data: {{ pie_chart_data|safe }},
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
-  </script>
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ pie_chart_labels|safe }},
+                datasets: [{
+                    label: '# of Activities',
+                    data: {{ pie_chart_data|safe }},
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Activity Status Distribution'
+                    }
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}

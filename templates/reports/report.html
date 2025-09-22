@@ -1,48 +1,66 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/_dashboard_base.html' %}
 {% load activity_tags %}
 
-{% block content %}
+{% block page_header %}
+    {% if report_type == 'daily' %}
+        Daily Report
+    {% elif report_type == 'weekly' %}
+        Weekly Report
+    {% elif report_type == 'monthly' %}
+        Monthly Report
+    {% endif %}
+{% endblock %}
+
+{% block dashboard_content %}
 <div class="card">
-  <div class="card-header d-flex justify-content-between align-items-center">
-    <h2>{% if report_type == 'daily' %}Daily{% elif report_type == 'weekly' %}Weekly{% elif report_type == 'monthly' %}Monthly{% endif %} Report</h2>
-    <div class="btn-group">
-      <a href="{% url 'reports:export_excel' report_type %}" class="btn btn-success">Excel</a>
-      <a href="{% url 'reports:export_csv' report_type %}" class="btn btn-primary">CSV</a>
-      <a href="{% url 'reports:export_json' report_type %}" class="btn btn-info">JSON</a>
-      <a href="{% url 'reports:export_pdf' report_type %}" class="btn btn-danger">PDF</a>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            {% if report_type == 'daily' %}
+                Today's Activities
+            {% elif report_type == 'weekly' %}
+                This Week's Activities
+            {% elif report_type == 'monthly' %}
+                This Month's Activities
+            {% endif %}
+        </h5>
+        <div class="btn-group">
+            <a href="{% url 'reports:export_excel' report_type %}" class="btn btn-sm btn-outline-success">Excel</a>
+            <a href="{% url 'reports:export_csv' report_type %}" class="btn btn-sm btn-outline-primary">CSV</a>
+            <a href="{% url 'reports:export_json' report_type %}" class="btn btn-sm btn-outline-info">JSON</a>
+            <a href="{% url 'reports:export_pdf' report_type %}" class="btn btn-sm btn-outline-danger">PDF</a>
+        </div>
     </div>
-  </div>
-  <div class="card-body">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Assigned To</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for activity in activities %}
-          <tr>
-            <td>{{ activity.description|truncatewords:20 }}</td>
-            <td><span class="badge bg-{{ activity.status.name|status_color }}">{{ activity.status.name }}</span></td>
-            <td>
-              {% for user in activity.assigned_users.all %}
-                {{ user.username }}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            </td>
-            <td>{{ activity.start_date }}</td>
-            <td>{{ activity.end_date }}</td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="5">No activities found for this period.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                    <tr>
+                        <td>{{ activity.description|truncatewords:20 }}</td>
+                        <td><span class="badge bg-{{ activity.status.name|status_color }}">{{ activity.status.name }}</span></td>
+                        <td>
+                            {% for user in activity.assigned_users.all %}
+                                {{ user.username }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ activity.start_date }}</td>
+                        <td>{{ activity.end_date }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No activities found for this period.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
