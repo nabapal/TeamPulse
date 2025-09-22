@@ -7,16 +7,17 @@
 
 <div class="card mb-4">
     <div class="card-header">
-        Filters
+        <i class="icon cil-filter"></i> Filters
     </div>
     <div class="card-body">
         <form method="get" action="" class="row g-3 align-items-center">
             <div class="col-md-4">
-                <label for="q" class="visually-hidden">Search</label>
-                <input type="text" name="q" id="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="icon cil-search"></i></span>
+                    <input type="text" name="q" id="q" class="form-control" placeholder="Search activities..." value="{{ request.GET.q }}">
+                </div>
             </div>
             <div class="col-md-2">
-                <label for="status" class="visually-hidden">Status</label>
                 <select name="status" id="status" class="form-select">
                     <option value="">-- Status --</option>
                     {% for status in statuses %}
@@ -25,7 +26,6 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label for="activity_type" class="visually-hidden">Activity Type</label>
                 <select name="activity_type" id="activity_type" class="form-select">
                     <option value="">-- Activity Type --</option>
                     {% for at in activity_types %}
@@ -34,7 +34,6 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label for="assignee" class="visually-hidden">Assignee</label>
                 <select name="assignee" id="assignee" class="form-select">
                     <option value="">-- Assignee --</option>
                     {% for assignee in assignees %}
@@ -51,16 +50,16 @@
 
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-        <a class="nav-link {% if report_type == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+        <a class="nav-link {% if request.resolver_match.view_name == 'dashboard:dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if report_type == 'daily' %}active{% endif %}" href="{% url 'reports:daily_report' %}">Daily Report</a>
+        <a class="nav-link {% if request.resolver_match.view_name == 'reports:daily_report' %}active{% endif %}" href="{% url 'reports:daily_report' %}">Daily Report</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if report_type == 'weekly' %}active{% endif %}" href="{% url 'reports:weekly_report' %}">Weekly Report</a>
+        <a class="nav-link {% if request.resolver_match.view_name == 'reports:weekly_report' %}active{% endif %}" href="{% url 'reports:weekly_report' %}">Weekly Report</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if report_type == 'monthly' %}active{% endif %}" href="{% url 'reports:monthly_report' %}">Monthly Report</a>
+        <a class="nav-link {% if request.resolver_match.view_name == 'reports:monthly_report' %}active{% endif %}" href="{% url 'reports:monthly_report' %}">Monthly Report</a>
     </li>
 </ul>
 
@@ -70,7 +69,9 @@
     </div>
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header">Activity Status</div>
+            <div class="card-header">
+                <i class="icon cil-chart-pie"></i> Activity Status
+            </div>
             <div class="card-body">
                 <canvas id="statusPieChart"></canvas>
             </div>
