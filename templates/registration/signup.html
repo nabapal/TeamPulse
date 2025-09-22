@@ -11,7 +11,29 @@
                         <p class="text-body-secondary">Create your account</p>
                         <form method="post">
                             {% csrf_token %}
-                            {{ form.as_p }}
+                            {% for field in form %}
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">
+                                        {% if field.name == 'username' %}
+                                            <i class="icon cil-user"></i>
+                                        {% elif field.name == 'email' %}
+                                            <i class="icon cil-envelope-closed"></i>
+                                        {% elif field.name == 'role' %}
+                                            <i class="icon cil-briefcase"></i>
+                                        {% elif 'password' in field.name %}
+                                            <i class="icon cil-lock-locked"></i>
+                                        {% else %}
+                                            <i class="icon cil-pencil"></i>
+                                        {% endif %}
+                                    </span>
+                                    {{ field }}
+                                </div>
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                             <button class="btn btn-block btn-success" type="submit">Create Account</button>
                         </form>
                         <div class="text-center mt-3">
