@@ -1,4 +1,5 @@
 {% load static %}
+{% load nav_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,18 +19,18 @@
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.view_name == 'dashboard:dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
+                    <a class="nav-link {% is_active 'dashboard:dashboard' %}" href="{% url 'dashboard:dashboard' %}">
                         <i class="nav-icon cil-speedometer"></i> Dashboard
                     </a>
                 </li>
                 {% if user.role == 'lead' or user.role == 'manager' %}
                     <li class="nav-item">
-                        <a class="nav-link {% if 'reports' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'reports:daily_report' %}">
+                        <a class="nav-link {% is_active 'reports' %}" href="{% url 'reports:daily_report' %}">
                             <i class="nav-icon cil-description"></i> Reports
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.view_name == 'dropdowns:dropdown_list' %}active{% endif %}" href="{% url 'dropdowns:dropdown_list' %}">
+                        <a class="nav-link {% is_active 'dropdowns:dropdown_list' %}" href="{% url 'dropdowns:dropdown_list' %}">
                             <i class="nav-icon cil-list"></i> Dropdowns
                         </a>
                     </li>
